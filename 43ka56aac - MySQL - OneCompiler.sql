@@ -48,14 +48,14 @@ select region_id, avg(vote_count) as Media_regiao from votes group by region_id;
 
 -- Candidatos com o maior número de votos em uma única região.
   -- Norte 101
-  select candidate_id as Mais_votado_norte, vote_count as vote_count from votes where region_id = 101 group by vote_count, candidate_id;
+  select candidate_id as Mais_votado_norte, vote_count as Total_votos from votes where region_id = 101 group by vote_count, candidate_id order by Total_votos desc;
   -- Nordeste 102
-  select candidate_id as Mais_votado_nordeste, vote_count as vote_count from votes where region_id = 102 group by vote_count, candidate_id;
+  select candidate_id as Mais_votado_nordeste, vote_count as Total_votos from votes where region_id = 102 group by vote_count, candidate_id order by Total_votos desc;
   -- Sul 103
-  select candidate_id as Mais_votado_sul, vote_count as vote_count from votes where region_id = 103 group by vote_count, candidate_id;
+  select candidate_id as Mais_votado_sul, vote_count as Total_votos from votes where region_id = 103 group by vote_count, candidate_id order by Total_votos desc;
   
 -- Região com o maior número de votos:
-select region_id as Regiao_mais_votada, sum(vote_count) as Votos from votes group by region_id;
+select region_id as Regiao_mais_votada, sum(vote_count) as Votos from votes group by region_id order by Votos desc;
 
 -- Candidato com o maior número de votos
 select candidate_id as Candidato_vencedor, sum(vote_count) as Votos from votes group by candidate_id order by Votos desc;
@@ -65,5 +65,17 @@ select candidate_id, sum(vote_count) as Candidatos_com_mais_de_500_votos from vo
 
 -- Número de votos por região e por candidato
 select candidate_id, region_id, sum(vote_count) as Votos_candidato_na_regiao from votes group by candidate_id, region_id;
+
+
+
+
+-- Crie mais duas consultas que façam uso das funções(min, max, AVG, etc) e do group by usando having.
+
+  -- Consultar, entre os candidatos com menos de 800 votos, o que tenha menos votos
+  select candidate_id as Candidato_menos_votos_com_menos_de_800 , sum(vote_count) as Total_votos from votes group by candidate_id having Total_votos < 800 order by Total_votos;
+  
+  -- Candidatos que tiveram média de votos acima de 200 por região
+  select candidate_id as Candidato_media_maior_200_por_regiao, avg(vote_count) as Media_votos from votes group by candidate_id having avg(vote_count) > 200;
+
 
  
