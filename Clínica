@@ -1,0 +1,119 @@
+CREATE TABLE ambulatorios (
+    num_ambulantorio INT PRIMARY KEY,
+    andar INT NOT NULL,
+    capacidade INT NOT NULL
+);
+  insert into ambulatorios values
+  (1, 1, 10),
+  (2, 1, 15),
+  (3, 2, 5),
+  (4, 2, 5),
+  (5, 2, 10);
+
+
+CREATE TABLE medicos (
+    codm INT PRIMARY KEY,
+    cpf VARCHAR(14) UNIQUE NOT NULL,  
+    nome VARCHAR(100) NOT NULL,
+    idade INT,
+    cidade VARCHAR(100),
+    especialidade VARCHAR(100),
+    num_ambulantorio INT,
+    FOREIGN KEY (num_ambulantorio) REFERENCES Ambulatorios(num_ambulantorio)
+);
+
+  insert into medicos values
+  (1, '101293576-70', 'Davi Santiago', 30, 'Cuitegi', 'Neurocirurgião', 1),
+  (2, '101453576-70', 'Victor Hugo', 50, 'Tacima', 'Fisioteraupeuta', 2),
+  (3, '431293576-70', 'João Neto', 60, 'João Pessoa', 'Neurocirurgião', 3),
+  (4, '101293686-70', 'Keyla Ribeiro', 35, 'João Pessoa', 'Cardiologista', 4),
+  (5, '101383576-70', 'Ana Carol', 41, 'João Pessoa', 'Alergologista', 5),
+  (6, '749047395-80', 'Hélio', 30, 'Cuitegi', 'Dentista',2);
+
+
+CREATE TABLE pacientes (
+    codp INT PRIMARY KEY,
+    cpf VARCHAR(14) UNIQUE NOT NULL,
+    nome VARCHAR(100) NOT NULL,
+    idade INT,
+    cidade VARCHAR(100),
+    doenca VARCHAR(100)
+);
+
+  insert into pacientes values
+  (1, '438840967-38', 'João', 15, 'Cuitegi', 'Rinite'),
+  (2, '438847367-38', 'Pedro Ernesto', 23, 'Mari', 'Demência'),
+  (3, '438841967-38', 'Hugo', 30, 'Cuitegi', 'Sinosite'),
+  (4, '431840967-38', 'Herllan', 28, 'João Pessoa', 'Dor na perna'),
+  (5, '438860967-38', 'José', 87, 'João Pessoa', 'Infarto');
+
+CREATE TABLE consultas (
+    codm INT,
+    codp INT,
+    data DATE,
+    hora TIME,
+    PRIMARY KEY (codm, codp, data, hora),
+  FOREIGN KEY (codm) REFERENCES Medicos(codm),
+  FOREIGN KEY (codp) REFERENCES Pacientes(codp)
+);
+
+
+insert into consultas values
+(5, 1, '2025-06-14', '08:30'),
+(2, 4, '2025-06-14', '08:45'),
+(5, 3, '2025-06-14', '10:00'),
+(1, 2, '2025-06-14', '07:00' ),
+(4, 5, '2025-06-14', '11:00');
+
+
+-- SELECIONA O NOME DO MÉDICO, PACIENTE E A HORA DA CONSULTA
+
+create view Consulta1 as      -- Cria a view (tabela virtual)
+select medicos.nome as medico,  -- acessa o nome do médico diretamente da tebela medicos e renomeia 
+pacientes.nome as paciente, 
+consultas.hora 
+from consultas    -- tabela principal
+inner join medicos on consultas.codm = medicos.codm   -- junta a tabela das consultas com a dos medicos,
+inner join pacientes on consultas.codp = pacientes.codp;  -- após o on é o método de conexão
+ 
+select * from Consulta1;
+
+-- A hora da consulta, o andar do ambulatódrio e o códdigo do médico;
+
+create view Consulta2 as
+select consultas.hora,
+medicos.num_ambulantorio,
+medicos.codm as Codigo_do_médico
+from consultas 
+join medicos on consultas.codm = medicos.codm;
+select * from Consulta2;
+
+
+-- Todos os nomes dos médicos (até os que não tem consultas) e a data e a hora da consulta;
+
+create view Consulta3 as
+select medicos.nome,
+consultas.data,
+consultas.hora
+from consultas
+right join medicos on consultas.codm = medicos.codm;
+
+select * from Consulta3;
+
+
+-- A idade dos pacientes, doença, nome dos médicos e o códdigo dos ambulatódrios.
+
+  create view Consulta4 as
+  select pacientes.nome as paciente,
+  pacientes.idade,
+  pacientes.doenca,
+  medicos.nome as médico,
+  medicos.num_ambulantorio
+  from consultas 
+  join pacientes on consultas.codp = pacientes.codp
+  join medicos on consultas.codm = medicos.codm;
+  
+  select * from Consulta4;
+
+
+ 
